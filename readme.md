@@ -7,7 +7,7 @@ The example consists of a Door object, which can be in one of three states; open
 ![Door State Machine](https://github.com/JalfResi/StateStrategyInGo/blob/master/DoorStateDiagram.png)
 
 ## Implementation Benefits
-The Strategy Pattern allows us to encapsulate the actions of each state transition within the State objects themselves. The State Pattern allows us to modify the behaviour of the encapsulating object. Th combination of the two allow us to keep the data of an object separate from the actions that modify that data using a State Machine to ensure that actions can only be executed when the object is in certain states.
+The Strategy Pattern allows us to encapsulate the actions of each state transition within the State objects themselves. This is the "how" the current state accomplishes something. The State Pattern allows us to encapsulating state-dependent behaviour. This is the "what" will be accomplished. The combination of the two allow us to keep the data of an object separate from the actions that modify that data using a State Machine to ensure that actions can only be executed when the object is in certain states.
 
 For strict State controlled actions, this combination of patterns can simplify things, especially if implementing commands via net/rpc:
 
@@ -17,9 +17,6 @@ func OpenDoorCommand() error {
 
     if door.Can(OpenDoorState{}) {
         err := door.Open()
-        if err != nil {
-            return err
-        }
 
         if door.IsOpen() {
             repo.Save(door)
