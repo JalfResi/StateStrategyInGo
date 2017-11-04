@@ -13,10 +13,7 @@ For strict State controlled actions, this combination of patterns can simplify t
 
 ```golang
 func OpenDoorCommand() error {
-    door, err := repo.Load()
-        if err != nil {
-        return err
-    }
+    door := repo.Load()
 
     if door.Can(OpenDoorState{}) {
         err := door.Open()
@@ -25,10 +22,7 @@ func OpenDoorCommand() error {
         }
 
         if door.IsOpen() {
-            err := repo.Save(door)
-            if err != nil {
-                return err
-            }
+            repo.Save(door)
         }
     }
 }
