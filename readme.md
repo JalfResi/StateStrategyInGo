@@ -25,6 +25,8 @@ func OpenDoorCommand() error {
             repo.Save(door)
         }
     }
+
+    return nil
 }
 ```
 
