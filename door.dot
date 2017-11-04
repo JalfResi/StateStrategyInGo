@@ -1,0 +1,10 @@
+digraph finite_state_machine {
+	rankdir=LR;
+	size="8,5"
+	node [shape = doublecircle]; Opened;
+	node [shape = circle];
+	Opened -> Closed [ label = "Close" ];
+	Closed -> Locked [ label = "Lock" ];
+	Locked -> Closed [ label = "Unlock" ];
+	Closed -> Opened [ label = "Open" ];
+}
