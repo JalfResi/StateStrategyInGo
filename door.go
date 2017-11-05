@@ -1,6 +1,7 @@
 package main
 
 //go:generate dot -Tpng -oDoorStateDiagram.png door.dot
+//go:generate dot -Tpng -oDoorObjectHeirarchy.png object_heirarchy.dot
 
 import "errors"
 

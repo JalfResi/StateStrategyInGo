@@ -1,0 +1,19 @@
+digraph hierarchy {
+    splines=ortho
+    size="6,6"
+    node[shape=record,style=filled,fillcolor=gray95]
+    edge[dir=back, arrowtail=empty]
+
+
+    Door[label = "{Door|state DoorState\l|Can(n DoorState) bool\lOpen() error\lClose() error\lLock() error\lUnlock() error\lIsOpen() bool\lIsClosed() bool\lIsLocked() bool\l}"]
+    DoorState[label = "{DoorState|Can(DoorState) bool\lOpen() (DoorState, error)\lClose() (DoorState, error)\lLock() (DoorState, error)\lUnlock() (DoorState, error)}"]
+
+    OpenDoorState[label = "{OpenDoorState|Can(DoorState) bool\lOpen() (DoorState, error)\lClose() (DoorState, error)\lLock() (DoorState, error)\lUnlock() (DoorState, error)}"]
+    ClosedDoorState[label = "{ClosedDoorState|Can(DoorState) bool\lOpen() (DoorState, error)\lClose() (DoorState, error)\lLock() (DoorState, error)\lUnlock() (DoorState, error)}"]
+    LockedDoorState[label = "{LockedDoorState|Can(DoorState) bool\lOpen() (DoorState, error)\lClose() (DoorState, error)\lLock() (DoorState, error)\lUnlock() (DoorState, error)}"]
+
+    Door -> DoorState[arrowtail=diamond, arrowtype=normal, label="state"]
+    DoorState -> OpenDoorState[style=dashed]
+    DoorState -> ClosedDoorState[style=dashed]
+    DoorState -> LockedDoorState[style=dashed]
+}

@@ -27,6 +27,8 @@ func OpenDoorCommand() error {
 }
 ```
 
+![Door Object Heirarchy](https://github.com/JalfResi/StateStrategyInGo/blob/master/DoorObjectHeirarchy.png)
+
 ## References
 For more information on the [Strategy Pattern](https://en.wikipedia.org/wiki/Strategy_pattern), see Strategy (315) in the Gang of Four authored [Design Patterns](https://en.wikipedia.org/wiki/Design_Patterns) book
 
