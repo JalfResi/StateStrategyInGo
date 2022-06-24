@@ -93,3 +93,28 @@ func TestTransitions(t *testing.T) {
 		}
 	}
 }
+
+func TestContextModification(t *testing.T) {
+
+	var testTable = []struct {
+		fnTransition func(d *Door)
+		expectedVisitorCount int
+		expectedLockCount int
+	}{
+		{func(d *Door) {d.Open()}, 1, 0},
+		{func(d *Door) {d.Close()}, 1, 0},
+		{func(d *Door) {d.Lock()}, 1, 1},
+	}
+	d := New(ClosedDoorState{})
+	for _, tt := range testTable {
+		tt.fnTransition(d)
+
+		if d.VisitorCount != tt.expectedVisitorCount {
+			t.Errorf("Context modification of VisitorCount failure. Expected: %v got: %v", tt.expectedVisitorCount, d.VisitorCount)
+		}
+
+		if d.LockCount != tt.expectedLockCount {
+			t.Errorf("Context modification of LockCount failure. Expected: %v got: %v", tt.expectedLockCount, d.LockCount)
+		}
+	}
+}
