@@ -7,37 +7,40 @@ import "errors"
 
 // Door is our model. It has state.
 type Door struct {
-	state DoorState
+	DoorState
+
+	VisitorCount int
+	LockCount    int
 }
 
 // DoorState is the state and possible transitions
 type DoorState interface {
 	Can(DoorState) bool
-	Open() (DoorState, error)
-	Close() (DoorState, error)
-	Lock() (DoorState, error)
-	Unlock() (DoorState, error)
+	Open(*Door) (DoorState, error)
+	Close(*Door) (DoorState, error)
+	Lock(*Door) (DoorState, error)
+	Unlock(*Door) (DoorState, error)
 }
 
 // New creates a new instance of Door initialised with a state
 func New(s DoorState) *Door {
-	return &Door{state: s}
+	return &Door{DoorState: s}
 }
 
 // Can is a helper function which returns true if we can transition
 // from the current state to the desired state
 func (d *Door) Can(n DoorState) bool {
-	return d.state.Can(n)
+	return d.DoorState.Can(n)
 }
 
 // Open is a helper function to call the Open transition
 // on the current state
 func (d *Door) Open() error {
-	s, err := d.state.Open()
+	s, err := d.DoorState.Open(d)
 	if err != nil {
 		return err
 	}
-	d.state = s
+	d.DoorState = s
 
 	return nil
 }
@@ -45,11 +48,11 @@ func (d *Door) Open() error {
 // Close is a helper function to call the Close transition
 // on the current state
 func (d *Door) Close() error {
-	s, err := d.state.Close()
+	s, err := d.DoorState.Close(d)
 	if err != nil {
 		return err
 	}
-	d.state = s
+	d.DoorState = s
 
 	return nil
 }
@@ -57,11 +60,11 @@ func (d *Door) Close() error {
 // Lock is a helper function to call the Lock transition
 // on the current state
 func (d *Door) Lock() error {
-	s, err := d.state.Lock()
+	s, err := d.DoorState.Lock(d)
 	if err != nil {
 		return err
 	}
-	d.state = s
+	d.DoorState = s
 
 	return nil
 }
@@ -69,30 +72,30 @@ func (d *Door) Lock() error {
 // Unlock is a helper function to call the Unlock transition
 // on the current state
 func (d *Door) Unlock() error {
-	s, err := d.state.Unlock()
+	s, err := d.DoorState.Unlock(d)
 	if err != nil {
 		return err
 	}
-	d.state = s
+	d.DoorState = s
 
 	return nil
 }
 
 // IsOpen returns true if we are in the OpenDoorState
 func (d *Door) IsOpen() bool {
-	_, ok := d.state.(OpenDoorState)
+	_, ok := d.DoorState.(OpenDoorState)
 	return ok
 }
 
 // IsClosed returns true if we are in the ClosedDoorState
 func (d *Door) IsClosed() bool {
-	_, ok := d.state.(ClosedDoorState)
+	_, ok := d.DoorState.(ClosedDoorState)
 	return ok
 }
 
 // IsLocked returns true if we are in the LockedDoorState
 func (d *Door) IsLocked() bool {
-	_, ok := d.state.(LockedDoorState)
+	_, ok := d.DoorState.(LockedDoorState)
 	return ok
 }
 
@@ -107,19 +110,19 @@ func (d abstractDoorState) Can(DoorState) bool {
 	return false
 }
 
-func (d abstractDoorState) Open() (DoorState, error) {
+func (d abstractDoorState) Open(ctx *Door) (DoorState, error) {
 	return &abstractDoorState{}, ErrIllegalStateTransition
 }
 
-func (d abstractDoorState) Close() (DoorState, error) {
+func (d abstractDoorState) Close(ctx *Door) (DoorState, error) {
 	return &abstractDoorState{}, ErrIllegalStateTransition
 }
 
-func (d abstractDoorState) Lock() (DoorState, error) {
+func (d abstractDoorState) Lock(ctx *Door) (DoorState, error) {
 	return &abstractDoorState{}, ErrIllegalStateTransition
 }
 
-func (d abstractDoorState) Unlock() (DoorState, error) {
+func (d abstractDoorState) Unlock(ctx *Door) (DoorState, error) {
 	return &abstractDoorState{}, ErrIllegalStateTransition
 }
 
@@ -140,7 +143,7 @@ func (s OpenDoorState) Can(n DoorState) bool {
 }
 
 // Close transitions from OpenDoorState to ClosedDoorState
-func (s OpenDoorState) Close() (DoorState, error) {
+func (s OpenDoorState) Close(door *Door) (DoorState, error) {
 	return ClosedDoorState{}, nil
 }
 
@@ -163,12 +166,14 @@ func (s ClosedDoorState) Can(n DoorState) bool {
 }
 
 // Open transitions from ClosedDoorState to OpenDoorState
-func (s ClosedDoorState) Open() (DoorState, error) {
+func (s ClosedDoorState) Open(door *Door) (DoorState, error) {
+	door.VisitorCount++
 	return OpenDoorState{}, nil
 }
 
 // Lock transitions from ClosedDoorState to LockedDoorState
-func (s ClosedDoorState) Lock() (DoorState, error) {
+func (s ClosedDoorState) Lock(door *Door) (DoorState, error) {
+	door.LockCount++
 	return LockedDoorState{}, nil
 }
 
@@ -189,6 +194,6 @@ func (s LockedDoorState) Can(n DoorState) bool {
 }
 
 // Unlock transitions from LockedDoorState to ClosedDoorState
-func (s LockedDoorState) Unlock() (DoorState, error) {
+func (s LockedDoorState) Unlock(door *Door) (DoorState, error) {
 	return ClosedDoorState{}, nil
 }
