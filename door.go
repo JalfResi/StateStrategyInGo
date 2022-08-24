@@ -7,9 +7,10 @@ import "errors"
 
 // Door is our model. It has state.
 type Door struct {
-	state DoorState
+	DoorState
+
 	VisitorCount int
-	LockCount int
+	LockCount    int
 }
 
 // DoorState is the state and possible transitions
@@ -23,23 +24,23 @@ type DoorState interface {
 
 // New creates a new instance of Door initialised with a state
 func New(s DoorState) *Door {
-	return &Door{state: s}
+	return &Door{DoorState: s}
 }
 
 // Can is a helper function which returns true if we can transition
 // from the current state to the desired state
 func (d *Door) Can(n DoorState) bool {
-	return d.state.Can(n)
+	return d.DoorState.Can(n)
 }
 
 // Open is a helper function to call the Open transition
 // on the current state
 func (d *Door) Open() error {
-	s, err := d.state.Open(d)
+	s, err := d.DoorState.Open(d)
 	if err != nil {
 		return err
 	}
-	d.state = s
+	d.DoorState = s
 
 	return nil
 }
@@ -47,11 +48,11 @@ func (d *Door) Open() error {
 // Close is a helper function to call the Close transition
 // on the current state
 func (d *Door) Close() error {
-	s, err := d.state.Close(d)
+	s, err := d.DoorState.Close(d)
 	if err != nil {
 		return err
 	}
-	d.state = s
+	d.DoorState = s
 
 	return nil
 }
@@ -59,11 +60,11 @@ func (d *Door) Close() error {
 // Lock is a helper function to call the Lock transition
 // on the current state
 func (d *Door) Lock() error {
-	s, err := d.state.Lock(d)
+	s, err := d.DoorState.Lock(d)
 	if err != nil {
 		return err
 	}
-	d.state = s
+	d.DoorState = s
 
 	return nil
 }
@@ -71,30 +72,30 @@ func (d *Door) Lock() error {
 // Unlock is a helper function to call the Unlock transition
 // on the current state
 func (d *Door) Unlock() error {
-	s, err := d.state.Unlock(d)
+	s, err := d.DoorState.Unlock(d)
 	if err != nil {
 		return err
 	}
-	d.state = s
+	d.DoorState = s
 
 	return nil
 }
 
 // IsOpen returns true if we are in the OpenDoorState
 func (d *Door) IsOpen() bool {
-	_, ok := d.state.(OpenDoorState)
+	_, ok := d.DoorState.(OpenDoorState)
 	return ok
 }
 
 // IsClosed returns true if we are in the ClosedDoorState
 func (d *Door) IsClosed() bool {
-	_, ok := d.state.(ClosedDoorState)
+	_, ok := d.DoorState.(ClosedDoorState)
 	return ok
 }
 
 // IsLocked returns true if we are in the LockedDoorState
 func (d *Door) IsLocked() bool {
-	_, ok := d.state.(LockedDoorState)
+	_, ok := d.DoorState.(LockedDoorState)
 	return ok
 }
 
